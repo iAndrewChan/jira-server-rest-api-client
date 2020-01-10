@@ -1,0 +1,45 @@
+version: '3.4'
+services:
+
+  jira:
+    build: .
+    image: jira-server
+    container_name: jira-server
+    depends_on:
+      - mysql
+    ports:
+      - "8080:8080"
+    volumes:
+      - jira_data:/var/jira
+    restart: always
+    networks:
+      - network-bridge
+
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-jira
+    environment:
+      - MYSQL_DATABASE=jira
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=jira
+      - MYSQL_PASSWORD=password
+    command: ['mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_bin']
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    networks:
+      - network-bridge
+  
+networks:
+  network-bridge:
+    driver: bridge
+
+volumes:
+  jira_data:
+    external: false
+    name: jira-data
+  mysql_data:
+    external: false
+    name: jira-sql-data
