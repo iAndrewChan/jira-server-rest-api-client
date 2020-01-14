@@ -59,3 +59,19 @@ Password: password
 2. Go to Jira settings > Products > Application links > Create a new link
 3. Application Name: app, Application Type: Generic Application, Tick create incoming link, and press Continue
 4. Consumer key: This will be used in the Go client, Consumer Name: jira app, Public key: copy from `jira_publickey.pem`, and Continue to finish Application link creation
+
+
+## Authentication issue 
+
+If Captcha has been triggered you cannot use Jira's REST API for the particular user
+When Captcha is a trigger your will receive a `X-Seraph-LoginReason: AUTHENTICATION_DENIED`
+
+For example in html format:
+
+```html
+<p>Basic Authentication Failure - Reason : AUTHENTICATION_DENIED</p>
+```
+
+To fix this you can turn off CATPCHA: 
+1. Login in as the jira administrator > settings (COG icon) > system > edit settings
+2. In "Maximum Authentication Attempts Allowed" leave blank
