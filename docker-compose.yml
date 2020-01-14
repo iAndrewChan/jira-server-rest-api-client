@@ -30,11 +30,15 @@ services:
       - mysql_data:/var/lib/mysql
     restart: always
     networks:
-      - network-bridge
+      network-bridge:
+        ipv4_address: 172.26.0.2
   
 networks:
   network-bridge:
     driver: bridge
+    ipam:
+      config:
+        - subnet: "172.26.0.2/16"
 
 volumes:
   jira_data:
