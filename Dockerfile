@@ -23,6 +23,8 @@ RUN export CONTAINER_USER=$JIRA_USER \
 && groupadd -r $JIRA_GROUP && useradd -r -g $JIRA_GROUP $JIRA_USER \
 && chown -R $JIRA_USER:$JIRA_GROUP ${JIRA_INSTALL} ${JIRA_HOME}/
 
+RUN apt-get update && apt-get install -y vim
+
 VOLUME $JIRA_HOME
 USER $JIRA_USER
 WORKDIR $JIRA_INSTALL
