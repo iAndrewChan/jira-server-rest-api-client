@@ -8,70 +8,73 @@ import (
 	"strings"
 )
 
-// Account - user details and REST API request config
+// Account - basic auth account details
 type Account struct {
 	Username string
 	Password string
-	Issue    Issue
 }
 
-// Issue - REST API calls to jira issue operations
-type Issue struct {
-	URL         string
-	ProjectKey  string
-	Summary     string
-	Description string
-	IssueType   string
+// Issue - common to all requests for issues
+type Issue interface {
+	validate()
+	payloadAsJSON() string
 }
 
-// validate - when an invalid issuetype value is given, panic
-func (i Issue) validate() {
-
-	switch i.IssueType {
-	case "Bug":
-	case "Story":
-	default:
-		panic("invalid value " + i.IssueType)
-	}
+// IssueC common to requests that create issues
+type IssueC interface {
+	createIssue(accptr *Account)
 }
 
-type requestBody struct {
-	Fields issueJSON `json:"fields"`
+// RequestBody - base JSON object
+type RequestBody struct {
+	Fields map[string]interface{} `json:"fields"`
 }
 
-type issueJSON struct {
-	Project     project   `json:"project"`
-	Summary     string    `json:"summary"`
-	Description string    `json:"description"`
-	IssueType   issueType `json:"issuetype"`
-}
-
-type project struct {
+// Project -
+type Project struct {
 	Key string `json:"key"`
 }
 
-type issueType struct {
+// IssueType -
+type IssueType struct {
 	Name string `json:"name"`
 }
 
-// buildJSONPayload - build a json request object from Issue
-func buildJSONPayload(issue Issue, debug bool) string {
+// CustomField -
+type CustomField struct {
+	Value string `json:"value"`
+}
+
+// Validate - interface validate()
+func Validate(i Issue) {
+	i.validate()
+}
+
+// BuildJSONPayload - interface payLoadAsJSON()
+func BuildJSONPayload(i Issue) string {
+	return i.payloadAsJSON()
+}
+
+// CreateIssue - interface CreateIssue()
+func CreateIssue(i IssueC, accptr *Account) {
+	i.createIssue(accptr)
+}
+
+// BuildPayload -
+func BuildPayload(i Issue) *strings.Reader {
+
+	Validate(i)
+	issuePayload := BuildJSONPayload(i)
+
+	payload := strings.NewReader(issuePayload)
+	return payload
+}
+
+// Encode payload
+func Encode(payload RequestBody, debug bool) string {
 
 	var JSONPayload []byte
 	var err error
-
-	payload := requestBody{
-		Fields: issueJSON{
-			Project: project{
-				Key: issue.ProjectKey,
-			},
-			Summary:     issue.Summary,
-			Description: issue.Description,
-			IssueType: issueType{
-				Name: issue.IssueType,
-			},
-		},
-	}
 
 	if debug {
 		// formatting the payload to have indent for pretty print
@@ -92,32 +95,37 @@ func buildJSONPayload(issue Issue, debug bool) string {
 	return JSONPayloadStr
 }
 
-// CreateIssue - create jira issue
-func (acc Account) CreateIssue() {
+// SendRequest - Make a request to the given url with payload
+func SendRequest(accptr *Account, url string, requestType string, payload *strings.Reader, debug bool) []byte {
 
-	acc.Issue.validate()
-	issuePayload := buildJSONPayload(acc.Issue, false)
-
-	method := "POST"
-
-	payload := strings.NewReader(issuePayload)
-
+	var req *http.Request
+	var err error
 	client := &http.Client{}
-	req, err := http.NewRequest(method, acc.Issue.URL, payload)
+
+	if payload != nil {
+		req, err = http.NewRequest(requestType, url, payload)
+	} else {
+		// payload nil is of type *Reader, we need to pass a stardard nil
+		req, err = http.NewRequest(requestType, url, nil)
+	}
 	if err != nil {
-		fmt.Println(err)
+		panic("Error: problem with building the payload as NewRequest" + err.Error())
 	}
 
-	req.SetBasicAuth(acc.Username, acc.Password)
+	req.SetBasicAuth((*accptr).Username, (*accptr).Password)
 	req.Header.Add("Content-Type", "application/json")
 
 	res, err := client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		panic("Error: problem with client request: " + err.Error())
 	}
 	defer res.Body.Close()
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	fmt.Println(string(body))
+	if debug {
+		fmt.Println(string(body))
+	}
+
+	return body
 }
