@@ -57,5 +57,5 @@ func (i BasicIssue) createIssue(accptr *Account) {
 		fmt.Println(payload)
 		fmt.Println("<<<<Payload<<<<")
 	}
-	// SendRequest(accptr, i.URL, "POST", payload)
+	SendRequest(accptr, i.URL, "POST", payload)
 }

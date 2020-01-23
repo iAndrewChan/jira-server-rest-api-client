@@ -3,9 +3,30 @@ package api
 import "fmt"
 
 /*
-	# Get custom field options
+	# Making a custom field madatory on a project
 
-	Gets the options that are set in the custom field
+	In the GUI:
+		* Project > Project settings > Click required
+
+	# Creating an issue and include a custom field
+
+	The error could not find valid 'id' or 'value in the Parent Option object means
+	REST API is looking for an object similar to `"customfield_11700": { "value": "Compliance" }` in this case.
+
+	You should also check whether there are options added in the custom field if they exist through the GUI.
+		* Setting > Issues > Custom Field > Configure > Options
+		* Refer to https://developer.atlassian.com/server/jira/platform/jira-rest-api-examples/ for custom field data formats
+
+	Example for a single choice list
+		```json
+		"{{customexternalfield}}": {"value": "medium"}
+		"{{customexternalfield}}": {"value": "priority"}
+		"{{customexternalfield}}": {"value": "low"}
+		```
+
+	I tried to create a unselected option for the custom field, but was not able to.
+
+	# Get custom field options
 
 	A custom field option id is unique for the option it contains
 
@@ -14,9 +35,8 @@ import "fmt"
 
 	To get the custom field id you need to:
 		* Either add a custom field to an existing issue or add the custom field when creating the issue
-		* On the GUI: Project > Select Issue > three dot icon > edit > configure field > tick the desired custom field
+		* In the GUI: Project > Select Issue > three dot icon > edit > configure field > tick the desired custom field
 		* Make a request to get issue, and then search for the custom field id to custom field option details (id, data format)
-
 
 	# Creating a custom field of type select list (single choice)
 
@@ -34,24 +54,6 @@ import "fmt"
 
 		com.atlassian.jira.issue.customfields > CustomFieldSearcher (interface) > "All known implementing classes"
 		* e.g. SelectSearcher, MultiSelectSearcher, Group Picker searcher etc.
-
-
-	# Creating an issue and include a custom field
-
-	The error could not find valid 'id' or 'value in the Parent Option object means
-	REST API is looking for an object similar to `"customfield_11700": { "value": "Compliance" }` in this case.
-
-	You should also check whether there are options added in the custom field if they exist through the GUI.
-
-	Example
-
-	```json
-	"{{customexternalfield}}": {"value": "medium"}
-	"{{customexternalfield}}": {"value": "priority"}
-	"{{customexternalfield}}": {"value": "low"}
-	```
-
-	I tried to create a unselected option for the custom field, but was not able to.
 */
 
 // IssueCreate - Issue with custom field
