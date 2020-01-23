@@ -1,7 +1,7 @@
 package api
 
-// SimpleIssue - REST API calls to jira issue operations
-type SimpleIssue struct {
+// BasicIssue - REST API calls to jira issue operations
+type BasicIssue struct {
 	URL         string
 	ProjectKey  string
 	Summary     string
@@ -10,8 +10,18 @@ type SimpleIssue struct {
 	Debug       bool
 }
 
+// Project -
+type Project struct {
+	Key string `json:"key"`
+}
+
+// IssueType -
+type IssueType struct {
+	Name string `json:"name"`
+}
+
 // validate - when an invalid issuetype value is given, panic
-func (i SimpleIssue) validate() {
+func (i BasicIssue) validate() {
 
 	switch i.IssueType {
 	case "Bug":
@@ -21,7 +31,7 @@ func (i SimpleIssue) validate() {
 	}
 }
 
-func (i SimpleIssue) payloadAsJSON() string {
+func (i BasicIssue) payloadAsJSON() string {
 
 	issue := map[string]interface{}{
 		"project":     Project{i.ProjectKey},
@@ -35,8 +45,8 @@ func (i SimpleIssue) payloadAsJSON() string {
 	return Encode(payload, i.Debug)
 }
 
-// createIssue - create jira issue
-func (i SimpleIssue) createIssue(accptr *Account) {
+// createIssue makes a basic jira issue
+func (i BasicIssue) createIssue(accptr *Account) {
 
 	payload := BuildPayload(i)
 	SendRequest(accptr, i.URL, "POST", payload, false)

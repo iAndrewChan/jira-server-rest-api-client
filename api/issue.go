@@ -30,21 +30,6 @@ type RequestBody struct {
 	Fields map[string]interface{} `json:"fields"`
 }
 
-// Project -
-type Project struct {
-	Key string `json:"key"`
-}
-
-// IssueType -
-type IssueType struct {
-	Name string `json:"name"`
-}
-
-// CustomField -
-type CustomField struct {
-	Value string `json:"value"`
-}
-
 // Validate - interface validate()
 func Validate(i Issue) {
 	i.validate()
@@ -123,9 +108,7 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	if debug {
-		fmt.Println(string(body))
-	}
+	fmt.Println(string(body))
 
 	return body
 }
