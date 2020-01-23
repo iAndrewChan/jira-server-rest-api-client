@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 // IssueU update issue fields
@@ -42,7 +43,7 @@ func (i IssueU) getIssueFields(accptr *Account) map[string]interface{} {
 
 	v := make(map[string]interface{})
 
-	body := SendRequest(accptr, i.URL, "GET", nil, false)
+	body := SendRequest(accptr, i.URL, "GET", nil)
 	err := json.Unmarshal(body, &v)
 	if err != nil {
 		panic("Error: unmarshalling problem " + err.Error())
@@ -65,5 +66,12 @@ func (i IssueU) UpdateIssueStrict(accptr *Account) {
 	}
 
 	payload := BuildPayload(i)
-	SendRequest(accptr, i.URL, "PUT", payload, true)
+
+	if i.Debug {
+		fmt.Println("====Payload====")
+		fmt.Println(payload)
+		fmt.Println("====Payload====")
+	}
+
+	SendRequest(accptr, i.URL, "PUT", payload)
 }

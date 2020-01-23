@@ -35,11 +35,6 @@ func Validate(i Issue) {
 	i.validate()
 }
 
-// BuildJSONPayload - interface payLoadAsJSON()
-func BuildJSONPayload(i Issue) string {
-	return i.payloadAsJSON()
-}
-
 // CreateIssue - interface CreateIssue()
 func CreateIssue(i IssueC, accptr *Account) {
 	i.createIssue(accptr)
@@ -49,7 +44,7 @@ func CreateIssue(i IssueC, accptr *Account) {
 func BuildPayload(i Issue) *strings.Reader {
 
 	Validate(i)
-	issuePayload := BuildJSONPayload(i)
+	issuePayload := i.payloadAsJSON()
 
 	payload := strings.NewReader(issuePayload)
 	return payload
@@ -74,14 +69,16 @@ func Encode(payload RequestBody, debug bool) string {
 	JSONPayloadStr := string(JSONPayload)
 
 	if debug {
-		fmt.Println("payload" + JSONPayloadStr)
+		fmt.Println(">>>>JSON payload string>>>>")
+		fmt.Println(JSONPayloadStr)
+		fmt.Println("<<<<JSON payload string<<<<")
 	}
 
 	return JSONPayloadStr
 }
 
 // SendRequest - Make a request to the given url with payload
-func SendRequest(accptr *Account, url string, requestType string, payload *strings.Reader, debug bool) []byte {
+func SendRequest(accptr *Account, url string, requestType string, payload *strings.Reader) []byte {
 
 	var req *http.Request
 	var err error
@@ -108,7 +105,9 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 
 	body, err := ioutil.ReadAll(res.Body)
 
+	fmt.Println(">>>>Response<<<<")
 	fmt.Println(string(body))
+	fmt.Println("<<<<Response<<<<")
 
 	return body
 }

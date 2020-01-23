@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 /*
 	# Get custom field options
 
@@ -91,6 +93,12 @@ func (i IssueCreate) payloadAsJSON() string {
 func (i IssueCreate) createIssue(accptr *Account) {
 
 	payload := BuildPayload(i)
-	// fmt.Println(payload)
-	SendRequest(accptr, i.Issue.URL, "POST", payload, false)
+
+	if i.Debug {
+		fmt.Println(">>>>Payload>>>>")
+		fmt.Println(payload)
+		fmt.Println("<<<<Payload<<<<")
+	}
+
+	SendRequest(accptr, i.Issue.URL, "POST", payload)
 }

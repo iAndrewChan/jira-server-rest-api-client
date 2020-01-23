@@ -1,5 +1,7 @@
 package api
 
+import "fmt"
+
 // BasicIssue - REST API calls to jira issue operations
 type BasicIssue struct {
 	URL         string
@@ -49,5 +51,11 @@ func (i BasicIssue) payloadAsJSON() string {
 func (i BasicIssue) createIssue(accptr *Account) {
 
 	payload := BuildPayload(i)
-	SendRequest(accptr, i.URL, "POST", payload, false)
+
+	if i.Debug {
+		fmt.Println(">>>>Payload>>>>")
+		fmt.Println(payload)
+		fmt.Println("<<<<Payload<<<<")
+	}
+	// SendRequest(accptr, i.URL, "POST", payload)
 }
