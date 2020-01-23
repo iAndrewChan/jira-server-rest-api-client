@@ -43,7 +43,7 @@ func main() {
 
 	jira.CreateIssue(si, accptr)
 
-	icf := jira.IssueCreate{
+	ic := jira.IssueCreate{
 		Issue: jira.BasicIssue{
 			URL:         host + issueurl,
 			ProjectKey:  projectKey,
@@ -54,10 +54,12 @@ func main() {
 		// Add fields for new issue
 		Fields: map[string]interface{}{
 			"customfield_10208": jira.CFSingleChoiceList{Value: "priority"},
+			"labels":            []string{"l1", "l2"},
 		},
+		Debug: false,
 	}
 
-	jira.CreateIssue(icf, accptr)
+	jira.CreateIssue(ic, accptr)
 
 	issueid := "10100"
 	iu := jira.IssueU{
@@ -66,7 +68,7 @@ func main() {
 		Fields: map[string]interface{}{
 			"summary":           "new summary",
 			"description":       "new description",
-			"customfield_10208": map[string]string{"value": "priority"},
+			"customfield_10208": jira.CFSingleChoiceList{Value: "priority"},
 		},
 	}
 
