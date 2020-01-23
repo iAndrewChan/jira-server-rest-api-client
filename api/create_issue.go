@@ -52,26 +52,34 @@ package api
 	I tried to create a unselected option for the custom field, but was not able to.
 */
 
-// IssueCF - Issue with custom field
-type IssueCF struct {
-	Issue SimpleIssue
-	CFID  string
-	CF    CustomField
-	Debug bool
+// IssueCreate - Issue with custom field
+type IssueCreate struct {
+	Issue  BasicIssue
+	Fields map[string]interface{}
+	Debug  bool
 }
 
-func (i IssueCF) validate() {
+// CFSingleChoiceList -
+type CFSingleChoiceList struct {
+	Value string `json:"value"`
+}
+
+func (i IssueCreate) validate() {
 	i.Issue.validate()
+	// TODO check possible fields in a issue for a project.
 }
 
-func (i IssueCF) payloadAsJSON() string {
+func (i IssueCreate) payloadAsJSON() string {
 
 	issue := map[string]interface{}{
 		"project":     Project{i.Issue.ProjectKey},
 		"summary":     i.Issue.Summary,
 		"description": i.Issue.Description,
 		"issuetype":   IssueType{i.Issue.IssueType},
-		i.CFID:        i.CF,
+	}
+
+	for key, value := range i.Fields {
+		issue[key] = value
 	}
 
 	payload := RequestBody{issue}
@@ -80,8 +88,9 @@ func (i IssueCF) payloadAsJSON() string {
 }
 
 // createIssue - create jira issue with custom field
-func (i IssueCF) createIssue(accptr *Account) {
+func (i IssueCreate) createIssue(accptr *Account) {
 
 	payload := BuildPayload(i)
+	// fmt.Println(payload)
 	SendRequest(accptr, i.Issue.URL, "POST", payload, false)
 }

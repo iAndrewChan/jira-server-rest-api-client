@@ -7,6 +7,8 @@ import (
 /*
 	In the jira app:
 
+	Anything with `Setting >` requires admin to see and access in JIRA
+
 	To find users on the system:
 	Setting > User management
 
@@ -29,9 +31,9 @@ func main() {
 	const host = "http://localhost:8080"
 	const issueurl = "/rest/api/2/issue"
 	const projectKey = "EX"
-	accptr := &jira.Account{"user", "user"}
+	accptr := &jira.Account{Username: "user", Password: "user"}
 
-	si := jira.SimpleIssue{
+	si := jira.BasicIssue{
 		URL:         host + issueurl,
 		ProjectKey:  projectKey,
 		Summary:     "Summary example",
@@ -41,13 +43,18 @@ func main() {
 
 	jira.CreateIssue(si, accptr)
 
-	const id = "10208"
-	const CFOption = "priority"
-
-	icf := jira.IssueCF{
-		Issue: si,
-		CFID:  "customfield_" + id,
-		CF:    jira.CustomField{CFOption},
+	icf := jira.IssueCreate{
+		Issue: jira.BasicIssue{
+			URL:         host + issueurl,
+			ProjectKey:  projectKey,
+			Summary:     "Summary example",
+			Description: "Description example",
+			IssueType:   "Story",
+		},
+		// Add fields for new issue
+		Fields: map[string]interface{}{
+			"customfield_10208": jira.CFSingleChoiceList{Value: "priority"},
+		},
 	}
 
 	jira.CreateIssue(icf, accptr)
@@ -55,6 +62,7 @@ func main() {
 	issueid := "10100"
 	iu := jira.IssueU{
 		URL: host + issueurl + "/" + issueid,
+		// Add fields to change
 		Fields: map[string]interface{}{
 			"summary":           "new summary",
 			"description":       "new description",
