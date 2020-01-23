@@ -13,6 +13,10 @@ import (
 	To find the project key:
 	Project > Project Settings > Details
 
+	To get the issue id:
+	Issues > Search for issues > Select the issue > mouse over the edit
+	In the corner of the browser screen you will see a `host/secure/EditIssue!default.jspa?id=xxxxx`
+
 	To get the custom field:
 	Setting > Issues > Custom Fields > Custom Field setting > Edit, the id in the url
 
