@@ -31,6 +31,7 @@ func main() {
 	const host = "http://localhost:8080"
 	const issueurl = "/rest/api/2/issue"
 	const projectKey = "EX"
+	issueid := "10100"
 	accptr := &jira.Account{Username: "user", Password: "user"}
 
 	si := jira.BasicIssue{
@@ -61,7 +62,6 @@ func main() {
 
 	jira.CreateIssue(ic, accptr)
 
-	issueid := "10100"
 	iu := jira.IssueU{
 		URL: host + issueurl + "/" + issueid,
 		// Add fields to change
@@ -74,4 +74,12 @@ func main() {
 
 	iu.UpdateIssueStrict(accptr)
 
+	issueClone := jira.IssueClone{
+		URL:              host + issueurl,
+		SourceIssueURL:   host + issueurl + "/" + issueid,
+		TargetProjectKey: "EX2",
+		Debug:            false,
+	}
+
+	issueClone.Clone(accptr)
 }
