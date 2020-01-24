@@ -10,6 +10,9 @@ import "fmt"
 
 	# Creating an issue and include a custom field
 
+	Add screen to custom field for it to appear in a project
+	* In the GUI: Setting > Custom Field > Custom field Settings > Add screen
+
 	The error could not find valid 'id' or 'value in the Parent Option object means
 	REST API is looking for an object similar to `"customfield_11700": { "value": "Compliance" }` in this case.
 
