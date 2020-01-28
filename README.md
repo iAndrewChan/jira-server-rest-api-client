@@ -75,3 +75,52 @@ For example in html format:
 To fix this you can turn off CATPCHA: 
 1. Login in as the jira administrator > settings (COG icon) > system > edit settings
 2. In "Maximum Authentication Attempts Allowed" leave blank
+
+## Configuring Jira for HTTP over TLS
+
+```bash
+docker ps
+docker exec -it containerid bash
+cd conf
+keytool -genkeypair -alias tomcat -keystore $PWD/.keystore -keyalg RSA
+> password: changeit # to match tomcat's default keypass
+> first name & last name: localhost
+```
+
+Add the following attributes to the connector:
+
+- SSLEnabled="true"
+- scheme="https"
+- secure="true"
+- keystoreFile="location of .keystore"
+
+```xml
+<Connector port="8080" relaxedPathChars="[]|" relaxedQueryChars="[]|{}^&#x5c;&#x60;&quot;&lt;&gt;"
+    maxThreads="150" minSpareThreads="25" connectionTimeout="20000" enableLookups="false"
+    maxHttpHeaderSize="8192" protocol="HTTP/1.1" useBodyEncodingForURI="true" redirectPort="8443"
+    acceptCount="100" disableUploadTimeout="true" bindOnInit="false"
+    SSLEnabled="true" scheme="https" secure="true"
+    keystoreFile="/opt/jira/conf/.keystore"/>
+```
+
+Force you web application to work with SSL (i.e. no http)
+
+```xml
+<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>all-except-attachments</web-resource-name>
+        <url-pattern>*.jsp</url-pattern>
+        <url-pattern>*.jspa</url-pattern>
+        <url-pattern>/browse/*</url-pattern>
+        <url-pattern>/issues/*</url-pattern>
+    </web-resource-collection>
+    <user-data-constraint>
+        <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+    </user-data-constraint>
+</security-constraint>
+```
+
+Restart the server:
+
+* Stop the containers
+* `docker-compose up`

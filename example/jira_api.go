@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	jira "jira-restapi-docker/api"
 	"net/http"
 )
@@ -29,14 +30,19 @@ import (
 
 func main() {
 
-	const host = "http://localhost:8080"
+	const host = "https://localhost:8080"
 	const issueurl = "/rest/api/2/issue"
 	const projectKey = "EX"
+
+	// accept any certificate, for TESTING only
+	tlsConfig := &tls.Config{InsecureSkipVerify: true}
+	transport := &http.Transport{TLSClientConfig: tlsConfig}
+
 	issueid := "10100"
 	accptr := &jira.Account{
 		Username: "user",
 		Password: "user",
-		Client:   &http.Client{},
+		Client:   &http.Client{Transport: transport},
 	}
 
 	si := jira.BasicIssue{

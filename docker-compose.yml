@@ -10,6 +10,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
+      - tomcat_conf:/opt/jira/conf
       - jira_data:/var/jira
     restart: always
     networks:
@@ -41,6 +42,9 @@ networks:
         - subnet: "172.26.0.2/16"
 
 volumes:
+  tomcat_conf:
+    external: false
+    name: tomcat-conf
   jira_data:
     external: false
     name: jira-data
