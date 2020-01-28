@@ -2,6 +2,7 @@ package main
 
 import (
 	jira "jira-restapi-docker/api"
+	"net/http"
 )
 
 /*
@@ -32,7 +33,11 @@ func main() {
 	const issueurl = "/rest/api/2/issue"
 	const projectKey = "EX"
 	issueid := "10100"
-	accptr := &jira.Account{Username: "user", Password: "user"}
+	accptr := &jira.Account{
+		Username: "user",
+		Password: "user",
+		Client:   &http.Client{},
+	}
 
 	si := jira.BasicIssue{
 		URL:         host + issueurl,

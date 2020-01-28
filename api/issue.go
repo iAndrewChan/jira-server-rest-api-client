@@ -12,6 +12,7 @@ import (
 type Account struct {
 	Username string
 	Password string
+	Client   *http.Client
 }
 
 // Issue - common to all requests for issues
@@ -82,7 +83,6 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 
 	var req *http.Request
 	var err error
-	client := &http.Client{}
 
 	if payload != nil {
 		req, err = http.NewRequest(requestType, url, payload)
@@ -97,7 +97,7 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 	req.SetBasicAuth((*accptr).Username, (*accptr).Password)
 	req.Header.Add("Content-Type", "application/json")
 
-	res, err := client.Do(req)
+	res, err := (*accptr).Client.Do(req)
 	if err != nil {
 		panic("Error: problem with client request: " + err.Error())
 	}
