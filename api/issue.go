@@ -105,7 +105,7 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 
 	body, err := ioutil.ReadAll(res.Body)
 
-	fmt.Println(">>>>Response<<<<")
+	fmt.Println(">>>>Response>>>>")
 	fmt.Println(string(body))
 	fmt.Println("<<<<Response<<<<")
 
