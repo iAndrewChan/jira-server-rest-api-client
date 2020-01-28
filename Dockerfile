@@ -1,5 +1,7 @@
 FROM openjdk:8-stretch
 
+# Adapted from https://github.com/haxqer/jira/blob/master/Dockerfile
+
 ENV JIRA_USER=jira \
     JIRA_HOME=/var/jira \
     JIRA_GROUP=jira \

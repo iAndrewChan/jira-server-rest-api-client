@@ -1,4 +1,7 @@
 version: '3.4'
+
+# adapted from https://github.com/haxqer/jira/blob/master/docker-compose.yml
+
 services:
 
   jira:
