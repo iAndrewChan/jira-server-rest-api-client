@@ -87,7 +87,7 @@ keytool -genkeypair -alias tomcat -keystore $PWD/.keystore -keyalg RSA
 > first name & last name: localhost
 ```
 
-Add the following attributes to the connector:
+Add the following attributes to the connector located in `conf/web.xml`:
 
 - SSLEnabled="true"
 - scheme="https"
@@ -103,7 +103,7 @@ Add the following attributes to the connector:
     keystoreFile="/opt/jira/conf/.keystore"/>
 ```
 
-Force you web application to work with SSL (i.e. no http)
+Force your web application to work with SSL (i.e. no http)
 
 ```xml
 <security-constraint>
