@@ -42,7 +42,7 @@ func (i BasicIssue) payloadAsJSON() string {
 		"issuetype":   IssueType{i.IssueType},
 	}
 
-	payload := RequestBody{issue}
+	payload := RequestBody{IssueRequestBody{issue}}
 
 	return Encode(payload, i.Debug)
 }

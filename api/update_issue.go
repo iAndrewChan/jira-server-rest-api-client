@@ -14,7 +14,7 @@ type IssueU struct {
 func (i IssueU) validate() {}
 
 func (i IssueU) payloadAsJSON() string {
-	payload := RequestBody{i.Fields}
+	payload := RequestBody{IssueRequestBody{i.Fields}}
 	return Encode(payload, i.Debug)
 }
 

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -26,9 +27,14 @@ type IssueC interface {
 	createIssue(accptr *Account)
 }
 
-// RequestBody - base JSON object
-type RequestBody struct {
+// IssueRequestBody - base issue JSON object
+type IssueRequestBody struct {
 	Fields map[string]interface{} `json:"fields"`
+}
+
+// RequestBody abstraction for different request body structs
+type RequestBody struct {
+	body interface{}
 }
 
 // Validate - interface validate()
@@ -51,8 +57,10 @@ func BuildPayload(i Issue) *strings.Reader {
 	return payload
 }
 
-// Encode payload
-func Encode(payload RequestBody, debug bool) string {
+// Encode payload to JSON
+func Encode(req RequestBody, debug bool) string {
+
+	payload := req.body
 
 	var JSONPayload []byte
 	var err error
@@ -105,8 +113,11 @@ func SendRequest(accptr *Account, url string, requestType string, payload *strin
 
 	body, err := ioutil.ReadAll(res.Body)
 
+	var prettyJSONBody bytes.Buffer
+	json.Indent(&prettyJSONBody, body, "", " ")
+
 	fmt.Println(">>>>Response>>>>")
-	fmt.Println(string(body))
+	fmt.Println(string(prettyJSONBody.Bytes()))
 	fmt.Println("<<<<Response<<<<")
 
 	return body

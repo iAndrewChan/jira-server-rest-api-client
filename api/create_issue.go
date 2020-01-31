@@ -89,7 +89,7 @@ func (i IssueCreate) payloadAsJSON() string {
 		issue[key] = value
 	}
 
-	payload := RequestBody{issue}
+	payload := RequestBody{IssueRequestBody{issue}}
 
 	return Encode(payload, i.Debug)
 }
