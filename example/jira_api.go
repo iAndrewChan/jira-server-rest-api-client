@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/tls"
 	jira "jira-restapi-docker/api"
 	"net/http"
 )
@@ -31,33 +30,31 @@ import (
 func main() {
 
 	const host = "https://localhost:8080"
-	const issueurl = "/rest/api/2/issue"
+	const restAPI = "/rest/api/2/"
+	const issueURL = restAPI + "issue"
+	const searchURL = restAPI + "search"
 	const projectKey = "EX"
-
-	// accept any certificate, for TESTING only
-	tlsConfig := &tls.Config{InsecureSkipVerify: true}
-	transport := &http.Transport{TLSClientConfig: tlsConfig}
 
 	issueid := "10100"
 	accptr := &jira.Account{
 		Username: "user",
 		Password: "user",
-		Client:   &http.Client{Transport: transport},
+		Client:   &http.Client{},
 	}
 
-	si := jira.BasicIssue{
-		URL:         host + issueurl,
+	bi := jira.BasicIssue{
+		URL:         host + issueURL,
 		ProjectKey:  projectKey,
 		Summary:     "Summary example",
 		Description: "Description example",
 		IssueType:   "Story",
 	}
 
-	jira.CreateIssue(si, accptr)
+	jira.CreateIssue(bi, accptr)
 
 	ic := jira.IssueCreate{
 		Issue: jira.BasicIssue{
-			URL:         host + issueurl,
+			URL:         host + issueURL,
 			ProjectKey:  projectKey,
 			Summary:     "Summary example",
 			Description: "Description example",
@@ -65,7 +62,7 @@ func main() {
 		},
 		// Add fields for new issue
 		Fields: map[string]interface{}{
-			"customfield_10208": jira.CFSingleChoiceList{Value: "priority"},
+			"customfield_10208": jira.CFSingleChoiceList{Value: "medium"},
 			"labels":            []string{"l1", "l2"},
 		},
 		Debug: false,
@@ -74,7 +71,7 @@ func main() {
 	jira.CreateIssue(ic, accptr)
 
 	iu := jira.IssueU{
-		URL: host + issueurl + "/" + issueid,
+		URL: host + issueURL + "/" + issueid,
 		// Add fields to change
 		Fields: map[string]interface{}{
 			"summary":           "new summary",
@@ -86,11 +83,23 @@ func main() {
 	iu.UpdateIssueStrict(accptr)
 
 	issueClone := jira.IssueClone{
-		URL:              host + issueurl,
-		SourceIssueURL:   host + issueurl + "/" + issueid,
+		URL:              host + issueURL,
+		SourceIssueURL:   host + issueURL + "/" + issueid,
 		TargetProjectKey: "EX2",
 		Debug:            false,
 	}
 
 	issueClone.Clone(accptr)
+
+	si := jira.SearchIssue{
+		URL: host + searchURL,
+		Query: map[string]interface{}{
+			"startAt":    0,
+			"maxResults": 5,
+			"fields":     [2]string{"id", "labels"}, // fields to include
+		},
+		Debug: false,
+	}
+	si.SearchWithLabel("l1,l2")
+	si.PrintSearchResult(accptr)
 }
