@@ -21,7 +21,7 @@ func (i *SearchIssue) payloadAsJSON() string {
 }
 
 // SearchWithLabel - search issues based on label
-func (i *SearchIssue) SearchWithLabel(labels string) {
+func (i *SearchIssue) searchWithLabel(labels string) {
 	var b strings.Builder
 
 	b.WriteString("labels in (")
@@ -32,7 +32,9 @@ func (i *SearchIssue) SearchWithLabel(labels string) {
 }
 
 // PrintSearchResult - print the search result
-func (i *SearchIssue) PrintSearchResult(accptr *Account) {
+func (i *SearchIssue) PrintSearchResult(accptr *Account, labels string) {
+
+	i.searchWithLabel(labels)
 
 	payload := BuildPayload(i)
 
@@ -45,13 +47,5 @@ func (i *SearchIssue) PrintSearchResult(accptr *Account) {
 
 	m := make(map[string]interface{})
 	json.Unmarshal(body, &m)
-
-	if i.Debug {
-		fmt.Println(">>>>Search Result>>>>")
-		fmt.Println(m)
-		fmt.Println("<<<<Search Result<<<<")
-	}
-
-	// TODO: possible do something with the response
 
 }

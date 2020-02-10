@@ -100,6 +100,6 @@ func main() {
 		},
 		Debug: false,
 	}
-	si.SearchWithLabel("l1,l2")
-	si.PrintSearchResult(accptr)
+
+	si.PrintSearchResult(accptr, "l1,l2")
 }
