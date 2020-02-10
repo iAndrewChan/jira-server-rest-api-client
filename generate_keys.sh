@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# keypair and cert are for Oauth authentication
+
 # generate private and public key pair
 openssl genrsa -out jira_privatekey.pem 1024
 
